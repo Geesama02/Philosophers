@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 11:54:59 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/16 14:50:24 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/02/17 14:13:19 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,7 +143,7 @@ void *routine(void *philo)
 		// if (tmp->id % 2 != 0)
 		// 	usleep(1);
 		// usleep(300);
-		if (tmp->id % 2 != 0)
+		if (tmp->id % 2 == 0)
 		{
 			pthread_mutex_lock(&tmp->left_fork->mutex);
 			tmp->left_fork->is_taken = tmp->id;
@@ -161,23 +161,16 @@ void *routine(void *philo)
 			printf("%ld %d has taken left fork | %d |\n", time_passed(tmp->vars->start_time), tmp->id, tmp->left_fork->id);
 			tmp->left_fork->is_taken = tmp->id;
 		}
-		if (tmp->vars->stop_simulation == 1)
-		{
-			pthread_mutex_unlock(&tmp->left_fork->mutex);
-			pthread_mutex_unlock(&tmp->right_fork->mutex);
-			return (NULL);
-		}
+
 		// printf("%ld %d has taken a fork\n", time_passed(tmp->vars->start_time), tmp->id);
+		printf("%ld %d is eating\n", time_passed(tmp->vars->start_time), tmp->id);
+		tmp->last_time_eat = time_passed(tmp->vars->start_time);
 		if (tmp->vars->stop_simulation == 1)
 		{
 			pthread_mutex_unlock(&tmp->left_fork->mutex);
 			pthread_mutex_unlock(&tmp->right_fork->mutex);
 			return (NULL);
 		}
-		printf("%ld %d is eating\n", time_passed(tmp->vars->start_time), tmp->id);
-		pthread_mutex_lock(&tmp->mutex);
-		tmp->last_time_eat = time_passed(tmp->vars->start_time);
-		pthread_mutex_unlock(&tmp->mutex);
 		accurate_usleep(tmp->vars->time_to_eat);
 		pthread_mutex_lock(&tmp->mutex);
 		if (tmp->nb_meals != -1)
@@ -213,6 +206,8 @@ void *routine(void *philo)
 			return (NULL);
 		}
 		printf("%ld %d is thinking\n", time_passed(tmp->vars->start_time), tmp->id);
+		if (tmp->vars->nb_philo % 2 != 0 && tmp->id % 2)
+			accurate_usleep((tmp->vars->time_to_eat * 2 - tmp->vars->time_to_sleep) * 0.42);
 	}
 	return NULL;
 }
@@ -275,19 +270,10 @@ void *monitor(void *vars)
 		while(i < tmp->nb_philo)
 		{
 			time_now = time_passed(tmp->start_time);
-			if(tmp->nb_philo % 2 != 0
-				&& time_now - tmp->philosophers[i].last_time_eat < tmp->time_to_die 
-				&& time_now - tmp->philosophers[i].last_time_eat > (tmp->time_to_eat * 2 + tmp->time_to_sleep))
-			{
-				pthread_mutex_unlock(&tmp->philosophers[i].right_fork->mutex);
-				pthread_mutex_unlock(&tmp->philosophers[i].left_fork->mutex);
-			}
 			if(time_now - tmp->philosophers[i].last_time_eat > tmp->time_to_die)
 			{
 				printf("left_fork: %d | right_fork: %d\n", tmp->philosophers[i].left_fork->is_taken, tmp->philosophers[i].right_fork->is_taken);
 				printf("time_now: %ld | last_time_eat: %ld | time passed: %ld\n", time_now, tmp->philosophers[i].last_time_eat, time_now - tmp->philosophers[i].last_time_eat);
-				printf("prev philo: %d | next philo: %d\n", tmp->philosophers[i].prev->id, tmp->philosophers[i].next->id);
-				printf("has_eaten: %d | next: %d | prev: %d | prev prev: %d\n", tmp->philosophers[i].has_eaten, tmp->philosophers[i].next->has_eaten, tmp->philosophers[i].prev->has_eaten, tmp->philosophers[i].prev->prev->has_eaten);
 				printf("%ld %d is dead\n", time_now, tmp->philosophers[i].id);
 				pthread_mutex_lock(&tmp->mutex);
 				tmp->stop_simulation = 1;
@@ -301,7 +287,6 @@ void *monitor(void *vars)
 		i = 0;
 	}
 	return (NULL);
-
 }
 
 int main(int argc, char **argv)
