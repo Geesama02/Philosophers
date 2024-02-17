@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 11:42:24 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/16 12:47:33 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/02/17 15:56:30 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,21 +24,15 @@ typedef struct s_vars t_vars;
 typedef struct s_fork
 {
 	int id;
-	int is_taken;
 	pthread_mutex_t	mutex;
 }	t_fork;
 
 typedef struct s_philosopher
 {
 	int id;
-	int is_dead;
-	int must_eat;
 	long last_time_eat;
-	struct s_philosopher *next;
-	struct s_philosopher *prev;
 	t_fork *left_fork;
 	t_fork *right_fork;
-	int has_eaten;
 	int nb_meals;
 	pthread_t	thread;
 	pthread_mutex_t	mutex;
@@ -61,6 +55,5 @@ typedef struct s_vars
 }	t_vars;
 
 int	ft_atoi(const char *str);
-int		ft_printf(const char *format, ...);
 
 #endif
