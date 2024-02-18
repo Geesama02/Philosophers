@@ -1,7 +1,7 @@
 CFLAGS = -Wall -Wextra -Werror
 CC = cc
 NAME = philo
-SRC = main.c ft_atoi.c
+SRC = main.c ft_atoi.c parse.c
 OBJS = ${SRC:.c=.o}
 
 all : ${NAME}

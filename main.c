@@ -6,37 +6,11 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 11:54:59 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/17 18:09:07 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/02/18 12:41:25 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-void *test()
-{
-	printf("Hello from thread\n");
-	return (NULL);
-}
-
-int check_argv(int argc, char **argv)
-{
-	int i;
-	int j;
-
-	i = 1;
-	while (i < argc)
-	{
-		j = 0;
-		while (argv[i][j])
-		{
-			if (argv[i][j] < '0' || argv[i][j] > '9')
-				return (0);
-			j++;
-		}
-		i++;
-	}
-	return (1);
-}
 
 int init_forks(t_vars *vars)
 {
@@ -60,19 +34,7 @@ int init_forks(t_vars *vars)
 	}
 	return (1);
 }
-long	time_now(void)
-{
-	struct timeval	tv;
-	long			time;
-	if (gettimeofday(&tv, NULL) != 0)
-	{
-		write(2, "gettimeofday() error\n", 22);
-		return (-1);
-	}
-	
-	time = tv.tv_sec * 1000 + tv.tv_usec / 1000;
-	return (time);
-}
+
 void safe_mutex_lock(pthread_mutex_t *mutex, t_vars *vars)
 {
 	if (pthread_mutex_lock(mutex) != 0)
@@ -91,21 +53,31 @@ void safe_mutex_unlock(pthread_mutex_t *mutex, t_vars *vars)
 	}
 }
 
+long	time_now(t_vars *vars)
+{
+	struct timeval	tv;
+	long			time;
+	if (gettimeofday(&tv, NULL) != 0)
+	{
+		write(2, "gettimeofday() error\n", 22);
+		safe_mutex_lock(&vars->mutex, vars);
+		vars->stop_simulation = 1;
+		safe_mutex_unlock(&vars->mutex, vars);
+		return (-1);
+	}
+	
+	time = tv.tv_sec * 1000 + tv.tv_usec / 1000;
+	return (time);
+}
+
 void accurate_usleep(long m_sec, t_vars *vars)
 {
 	long	start;
 
 	if(m_sec <= 0)
 		return ;
-	start = time_now();
-	if (start == -1)
-	{
-		safe_mutex_lock(&vars->mutex, vars);
-		vars->stop_simulation = 1;
-		safe_mutex_unlock(&vars->mutex, vars);
-		return ;
-	}
-	while ((time_now() - start) < m_sec)
+	start = time_now(vars);
+	while ((time_now(vars) - start) < m_sec)
 		usleep(500);
 }
 
@@ -259,6 +231,7 @@ int init_philos(t_vars *vars)
 		if (pthread_mutex_init(&vars->philosophers[i].mutex, NULL) != 0)
 		{
 			write(2, "pthread_mutex_init() error\n", 28);
+			free(vars->philosophers);
 			return (0);
 		}
 		if(i == vars->nb_philo - 1)
@@ -353,33 +326,112 @@ void clean_memory(t_vars *vars)
 	free(vars->forks);
 }
 
-int main(int argc, char **argv)
+int safe_thread_join(pthread_t thread, t_vars *vars)
 {
-	// pthread_t thread;
-	t_vars vars;
+	if (pthread_join(thread, NULL) != 0)
+	{
+		write(2, "pthread_join() error\n", 22);
+		safe_mutex_lock(&vars->mutex, vars);
+		vars->stop_simulation = 1;
+		safe_mutex_unlock(&vars->mutex, vars);
+		clean_memory(vars);
+		return (1);
+	}
+	return (0);
+}
+
+int start_monitor(t_vars *vars, int i)
+{
+	if (pthread_create(&vars->monitor, NULL, &monitor, vars) != 0)
+	{
+		write(2, "pthread_create() error\n", 24);
+		safe_mutex_lock(&vars->mutex, vars);
+		vars->stop_simulation = 1;
+		safe_mutex_unlock(&vars->mutex, vars);
+		while(i >= 0)
+		{
+			if (safe_thread_join(vars->philosophers[i].thread, vars))
+				return (1);
+			i--;
+		}
+		clean_memory(vars);
+		return (1);
+	}
+	return (0);
+}
+
+int	start_threads(t_vars *vars)
+{
+	int i;
+
+	i = 0;
+	while(i < vars->nb_philo)
+	{
+		if (pthread_create(&vars->philosophers[i].thread, NULL, &routine, &vars->philosophers[i]) != 0)
+		{
+			write(2, "pthread_create() error\n", 24);
+			safe_mutex_lock(&vars->mutex, vars);
+			vars->stop_simulation = 1;
+			safe_mutex_unlock(&vars->mutex, vars);
+			while(i >= 0)
+			{
+				if (safe_thread_join(vars->philosophers[i].thread, vars))
+					return (1);
+				i--;
+			}
+			clean_memory(vars);
+			return (1);
+		}
+		usleep(300);
+		i++;
+	}
+	if (start_monitor(vars, i))
+		return (1);
+	return (0);
+}
+
+int join_threads(t_vars *vars)
+{
+	int i = 0;
+	while(i < vars->nb_philo)
+	{
+		if (safe_thread_join(vars->philosophers[i].thread, vars))
+			return (1);
+		i++;
+	}
+	if (safe_thread_join(vars->monitor, vars))
+		return (1);
+	return (0);
+}
+
+void init_values(t_vars *vars, int argc, char **argv)
+{
 	struct timeval tv;
 
 	gettimeofday(&tv, NULL);
-	// vars.start_time = tv.tv_sec;
-	if(!check_argv(argc, argv) || argc > 6 || argc < 5 || ft_atoi(argv[1]) == 0)
+	vars->nb_philo = ft_atoi(argv[1]);
+	vars->nb_philo = ft_atoi(argv[1]);
+	vars->time_to_die = ft_atoi(argv[2]);
+	vars->time_to_eat = ft_atoi(argv[3]);
+	vars->time_to_sleep = ft_atoi(argv[4]);
+	if (argc == 6)
+		vars->nb_meals = ft_atoi(argv[5]);
+	else
+		vars->nb_meals = -1;
+	vars->start_time = tv.tv_sec * 1000 + tv.tv_usec / 1000;
+	vars->stop_simulation = 0;
+}
+
+int main(int argc, char **argv)
+{
+	t_vars vars;
+
+	if(!check_argv(argc, argv) || argc > 6 || argc < 5)
 	{
 		printf("Invalid Parameters\n");
 		return (1);
 	}
-	vars.nb_philo = ft_atoi(argv[1]);
-	vars.time_to_die = ft_atoi(argv[2]);
-	vars.time_to_eat = ft_atoi(argv[3]);
-	vars.time_to_sleep = ft_atoi(argv[4]);
-	if (argc == 6)
-	{
-		if (ft_atoi(argv[5]) == 0)
-			return (0);
-		vars.nb_meals = ft_atoi(argv[5]);
-	}
-	else
-		vars.nb_meals = -1;
-	vars.start_time = tv.tv_sec * 1000 + tv.tv_usec / 1000;
-	vars.stop_simulation = 0;
+	init_values(&vars, argc, argv);
 	if (!init_forks(&vars))
 		return (1);
 	if (!init_philos(&vars))
@@ -394,69 +446,11 @@ int main(int argc, char **argv)
 		free(vars.philosophers);
 		return (1);
 	}
-	int i = 0;
-	while(i < vars.nb_philo)
-	{
-		if (pthread_create(&vars.philosophers[i].thread, NULL, &routine, &vars.philosophers[i]) != 0)
-		{
-			write(2, "pthread_create() error\n", 24);
-			safe_mutex_lock(&vars.mutex, &vars);
-			vars.stop_simulation = 1;
-			safe_mutex_unlock(&vars.mutex, &vars);
-			while(i >= 0)
-			{
-				if (pthread_join(vars.philosophers[i].thread, NULL) != 0)
-				{
-					write(2, "pthread_join() error\n", 22);
-					clean_memory(&vars);
-					return (1);
-				}
-				i--;
-			}
-			clean_memory(&vars);
-			return (1);
-		}
-		usleep(300);
-		i++;
-	}
-	if (pthread_create(&vars.monitor, NULL, &monitor, &vars) != 0)
-	{
-		write(2, "pthread_create() error\n", 24);
-		clean_memory(&vars);
+	if (start_threads(&vars))
 		return (1);
-	}
-	i = 0;
-	while(i < vars.nb_philo)
-	{
-		
-		if (pthread_join(vars.philosophers[i].thread, NULL) != 0)
-		{
-			write(2, "pthread_join() error\n", 22);
-			clean_memory(&vars);
-			return (1);
-		}
-		// printf("philo %d left_fork: %d | right_fork: %d\n", vars.philosophers[i].id, vars.philosophers[i].left_fork->id, vars.philosophers[i].right_fork->id);
-		i++;
-	}
-	if (pthread_join(vars.monitor, NULL) != 0)
-	{
-		write(2, "pthread_join() error\n", 22);
-		clean_memory(&vars);
+	if (join_threads(&vars))
 		return (1);
-	}
-	i = 0;
-	while(i < vars.nb_philo)
-	{
-		pthread_mutex_destroy(&vars.forks[i].mutex);
-		pthread_mutex_destroy(&vars.philosophers[i].mutex);
-		i++;
-	}
-	pthread_mutex_destroy(&vars.mutex);
-	
-
-	// pthread_create(&thread, NULL, &test, NULL);
-
-	// sleep(1);
+	clean_memory(&vars);
 	
 	return (0);
 }

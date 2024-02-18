@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 11:42:24 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/17 15:56:30 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/02/18 11:22:07 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ typedef struct s_vars
 	t_fork *forks;
 }	t_vars;
 
-int	ft_atoi(const char *str);
+long	ft_atoi(const char *str);
+int		check_argv(int argc, char **argv);
 
 #endif

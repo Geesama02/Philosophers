@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 16:51:02 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/01 13:31:49 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/02/18 11:15:11 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static void	check_sign(char str, int *neg, long *i)
 	}
 }
 
-int	ft_atoi(const char *str)
+long	ft_atoi(const char *str)
 {
 	long	i;
 	long	r;
