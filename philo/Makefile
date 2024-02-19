@@ -1,7 +1,8 @@
 CFLAGS = -Wall -Wextra -Werror
 CC = cc
 NAME = philo
-SRC = main.c ft_atoi.c parse.c
+SRC = main.c ft_atoi.c parse.c init_utils.c clean_utils.c monitor.c routine.c \
+		sleep_utils.c threads_utils.c utils.c
 OBJS = ${SRC:.c=.o}
 
 all : ${NAME}
@@ -20,4 +21,4 @@ fclean : clean
 
 re : fclean all
 
-.PHONY : all clean fclean re bonus
+.PHONY : all clean fclean re
