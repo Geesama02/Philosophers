@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 16:59:49 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/21 17:00:58 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/02/24 18:12:28 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,25 +74,17 @@ void *monitor_death(void *vars)
 
 	philo = (t_philosopher *)vars;
 	sem_wait(philo->vars->death);
-	// printf("time %ld | philo %d | death pid: %d\n", time_passed(philo->vars), philo->id, getpid());
 	sem_post(philo->vars->death);
+	// printf("philo %d meals %d\n", philo->id, philo->nb_meals);
 	sem_wait(philo->vars->stop);
 	philo->vars->stop_simulation = 1;
 	sem_post(philo->vars->stop);
-	sem_close(philo->vars->forks);
-	sem_close(philo->vars->stop);
-	sem_close(philo->vars->print);
-	sem_close(philo->vars->eat);
-	sem_close(philo->vars->death);
-	sem_unlink("forks");
-	sem_unlink("stop");
-	sem_unlink("print");
-	sem_unlink("eat");
-	sem_unlink("death");
-	// exit(0);
-	// sem_post(tmp->death);
 	return (NULL);
-	
+}
+
+void a()
+{
+	system("leaks philo_bonus");
 }
 
 int main(int argc, char **argv)
@@ -121,14 +113,11 @@ int main(int argc, char **argv)
 	vars.print = sem_open("print", O_CREAT, 0644, 1);
 	vars.eat = sem_open("eat", O_CREAT, 0644, 1);
 	vars.death = sem_open("death", O_CREAT, 0644, 0);
-	printf("main pid: %d\n", getpid());
 	int pid = fork();
 	while (i < vars.nb_philo - 1)
 	{
 		if (pid != 0)
-		{
 			pid = fork();
-		}
 		else
 			break ;
 		i++;
@@ -136,29 +125,26 @@ int main(int argc, char **argv)
 	if (pid == 0)
 	{
 		pthread_create(&vars.death_thread, NULL, &monitor_death, &vars.philosophers[i]);
-		pthread_create(&vars.monitor_thread, NULL, &monitor, &vars.philosophers[i]);
+		// pthread_create(&vars.monitor_thread, NULL, &monitor, &vars.philosophers[i]);
 		routine(&vars.philosophers[i]);
-		pthread_join(vars.monitor_thread, NULL);
+		// pthread_detach(vars.monitor_thread);
 		pthread_join(vars.death_thread, NULL);
 	}
-	// while (waitpid(-1, NULL, 0) > 0);
-	waitpid(-1, NULL, 0);
-	sem_wait(vars.death);
-	// printf("pid: %d\n", getpid());
-	
+	while (waitpid(-1, NULL, 0) > 0);
+	// printf("philo %d done | pid = %d\n", i+ 1, getpid());
 	sem_close(vars.forks);
 	sem_close(vars.stop);
 	sem_close(vars.print);
 	sem_close(vars.eat);
 	sem_close(vars.death);
-	sem_unlink("forks");
-	sem_unlink("stop");
-	sem_unlink("print");
-	sem_unlink("eat");
-	sem_unlink("death");
+	if (pid != 0)
+	{
+		sem_unlink("forks");
+		sem_unlink("stop");
+		sem_unlink("print");
+		sem_unlink("eat");
+		sem_unlink("death");
+	}
 	free(vars.philosophers);
-	
-	// kill(0, SIGCHLD);
-
 	return (0);
 }

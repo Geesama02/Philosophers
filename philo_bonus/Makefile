@@ -7,7 +7,7 @@ OBJS = ${SRC:.c=.o}
 all : ${NAME}
 
 ${NAME} : ${OBJS}
-	${CC} ${CFLAGS} ${OBJS} -o ${NAME}
+	${CC} ${CFLAGS} -pthread ${OBJS} -o ${NAME}
 
 %.o: %.c philo_bonus.h
 	${CC} ${CFLAGS} -c -o $@ $<
