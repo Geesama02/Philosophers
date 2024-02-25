@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 16:38:05 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/24 17:02:51 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/02/25 13:15:43 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ typedef struct s_vars
 	pthread_t		monitor_thread;
 	pthread_t		death_thread;
 	sem_t			*stop;
+	sem_t			*eat_time;
 	sem_t			*eat;
 	sem_t			*death;
 	sem_t			*print;
@@ -65,5 +66,7 @@ void	print_msg(t_philosopher *philo, char *msg);
 long	time_passed(t_vars *vars);
 int		check_if_done(t_philosopher *philo);
 int		check_if_dead(t_philosopher *philo);
+void	safe_sem_wait(sem_t *sem, t_philosopher *philo);
+void	safe_sem_post(sem_t *sem, t_philosopher *philo);
 
 #endif

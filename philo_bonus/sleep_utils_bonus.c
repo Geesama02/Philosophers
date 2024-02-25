@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 11:41:07 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/24 17:03:01 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/02/25 10:18:37 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ void	accurate_usleep(long m_sec, t_vars *vars)
 	start = time_now(vars);
 	while ((time_now(vars) - start) < m_sec)
 	{
-		// if (stop_similation(vars->philosophers))
-		// 	return ;
+		if (stop_similation(vars->philosophers))
+			return ;
 		usleep(500);
 	}
 }
