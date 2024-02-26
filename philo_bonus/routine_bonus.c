@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 11:32:17 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/25 11:27:06 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/02/26 12:17:29 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,20 @@ int	lock_forks(t_philosopher *philo)
 {
 	if (stop_similation(philo))
 		return (0);
-	sem_wait(philo->vars->forks);
+	safe_sem_wait(philo->vars->forks, philo);
 	if (stop_similation(philo))
+	{
+		safe_sem_post(philo->vars->forks, philo);
 		return (0);
+	}
 	print_msg(philo, "has taken a fork");
-	sem_wait(philo->vars->forks);
+	safe_sem_wait(philo->vars->forks, philo);
 	if (stop_similation(philo))
+	{
+		safe_sem_post(philo->vars->forks, philo);
+		safe_sem_post(philo->vars->forks, philo);
 		return (0);
+	}
 	print_msg(philo, "has taken a fork");
 	return (1);
 }
@@ -30,20 +37,20 @@ int	lock_forks(t_philosopher *philo)
 int	eat_routine(t_philosopher *philo)
 {
 	print_msg(philo, "is eating");
-	sem_wait(philo->vars->eat_time);
+	safe_sem_wait(philo->vars->eat_time, philo);
 	philo->last_time_eat = time_passed(philo->vars);
-	sem_post(philo->vars->eat_time);
+	safe_sem_post(philo->vars->eat_time, philo);
 	if (stop_similation(philo))
 		return (0);
 	accurate_usleep(philo->vars->time_to_eat, philo->vars);
 	if (stop_similation(philo))
 		return (0);
-	sem_wait(philo->vars->eat);
+	safe_sem_wait(philo->vars->eat, philo);
 	if (philo->nb_meals != -1)
 		philo->nb_meals++;
-	sem_post(philo->vars->eat);
-	sem_post(philo->vars->forks);
-	sem_post(philo->vars->forks);
+	safe_sem_post(philo->vars->eat, philo);
+	safe_sem_post(philo->vars->forks, philo);
+	safe_sem_post(philo->vars->forks, philo);
 	return (1);
 }
 

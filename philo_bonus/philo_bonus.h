@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 16:38:05 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/25 13:15:43 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/02/26 15:47:23 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include <semaphore.h>
 # include <signal.h>
 
-typedef struct s_vars t_vars;
+typedef struct s_vars	t_vars;
 
 typedef struct s_philosopher
 {
@@ -44,6 +44,7 @@ typedef struct s_vars
 	int				last_time_eat;
 	long			start_time;
 	int				stop_simulation;
+	int				print_death;
 	pthread_t		monitor_thread;
 	pthread_t		death_thread;
 	sem_t			*stop;
@@ -68,5 +69,12 @@ int		check_if_done(t_philosopher *philo);
 int		check_if_dead(t_philosopher *philo);
 void	safe_sem_wait(sem_t *sem, t_philosopher *philo);
 void	safe_sem_post(sem_t *sem, t_philosopher *philo);
+int		init_values(t_vars *vars, int argc, char **argv);
+int		init_philos(t_vars *vars);
+int		init_semaphores(t_vars *vars);
+int		fill_philo(t_vars *vars);
+void	*monitor_death(void *vars);
+int		init_threads(t_vars *vars, int i, int pid);
+int		clean_mem(t_vars *vars, int pid);
 
 #endif

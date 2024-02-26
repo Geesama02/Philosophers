@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 11:41:07 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/25 10:18:37 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/02/26 18:07:19 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,10 @@ long	time_passed(t_vars *vars)
 
 void	print_msg(t_philosopher *philo, char *msg)
 {
-	sem_wait(philo->vars->print);
-	printf("%ld %d %s\n", time_passed(philo->vars), philo->id, msg);
-	sem_post(philo->vars->print);
+	safe_sem_wait(philo->vars->print, philo);
+	safe_sem_wait(philo->vars->stop, philo);
+	if (philo->vars->stop_simulation == 0)
+		printf("%ld %d %s\n", time_passed(philo->vars), philo->id, msg);
+	safe_sem_post(philo->vars->stop, philo);
+	safe_sem_post(philo->vars->print, philo);
 }
