@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 16:59:49 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/26 17:34:43 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/02/27 12:59:50 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,6 +137,5 @@ int	main(int argc, char **argv)
 	}
 	if (start_simulation(&vars, &i, &pid))
 		return (1);
-	// printf("Simulation Done\n");
 	return (0);
 }

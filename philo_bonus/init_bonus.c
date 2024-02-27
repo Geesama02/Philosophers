@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 12:00:29 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/26 15:49:25 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/02/27 13:01:56 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ int	init_values(t_vars *vars, int argc, char **argv)
 		vars->nb_meals = -1;
 	vars->start_time = tv.tv_sec * 1000 + tv.tv_usec / 1000;
 	vars->stop_simulation = 0;
-	vars->print_death = 0;
 	return (0);
 }
 

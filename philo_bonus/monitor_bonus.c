@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 11:35:31 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/26 18:14:47 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/02/27 13:21:01 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,7 @@ void	*monitor_death(void *vars)
 
 	philo = (t_philosopher *)vars;
 	safe_sem_wait(philo->vars->death, philo);
-	safe_sem_post(philo->vars->death, philo);
-	safe_sem_wait(philo->vars->stop, philo);
 	philo->vars->stop_simulation = 1;
-	safe_sem_post(philo->vars->stop, philo);
 	return (NULL);
 }
 
@@ -36,11 +33,14 @@ void	*monitor(void *vars)
 			return (NULL);
 		if (check_if_done(tmp))
 		{
-			safe_sem_wait(tmp->vars->stop, tmp);
-			tmp->vars->stop_simulation = 1;
-			safe_sem_post(tmp->vars->stop, tmp);
 			if (tmp->vars->nb_philo == tmp->id)
-				safe_sem_post(tmp->vars->death, tmp);
+			{
+				while (tmp->vars->nb_philo > 0)
+				{
+					safe_sem_post(tmp->vars->death,
+						&tmp->vars->philosophers[tmp->vars->nb_philo--]);
+				}
+			}
 			return (NULL);
 		}
 		if (check_if_dead(tmp))
@@ -54,7 +54,7 @@ int	stop_similation(t_philosopher *philo)
 	safe_sem_wait(philo->vars->stop, philo);
 	if (philo->vars->stop_simulation == 1)
 	{
-		sem_post(philo->vars->stop);
+		safe_sem_post(philo->vars->stop, philo);
 		return (1);
 	}
 	safe_sem_post(philo->vars->stop, philo);
@@ -64,19 +64,16 @@ int	stop_similation(t_philosopher *philo)
 int	check_if_dead(t_philosopher *philo)
 {
 	long	time_now;
-	int 	i;
+	int		i;
 
 	i = 0;
-	safe_sem_wait(philo->vars->stop, philo);
 	safe_sem_wait(philo->vars->eat_time, philo);
 	time_now = time_passed(philo->vars);
-	if (time_now - philo->last_time_eat > philo->vars->time_to_die
-		&& philo->vars->stop_simulation == 0)
+	if (time_now - philo->last_time_eat > philo->vars->time_to_die)
 	{
-		safe_sem_post(philo->vars->stop, philo);
 		safe_sem_post(philo->vars->eat_time, philo);
 		print_msg(philo, "died");
-		while(i < philo->vars->nb_philo)
+		while (i < philo->vars->nb_philo)
 		{
 			safe_sem_post(philo->vars->death, &philo->vars->philosophers[i]);
 			i++;
@@ -86,7 +83,6 @@ int	check_if_dead(t_philosopher *philo)
 		return (1);
 	}
 	safe_sem_post(philo->vars->eat_time, philo);
-	safe_sem_post(philo->vars->stop, philo);
 	return (0);
 }
 

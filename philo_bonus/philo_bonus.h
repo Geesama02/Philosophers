@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 16:38:05 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/26 15:47:23 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/02/27 13:01:39 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,15 +19,12 @@
 # include <pthread.h>
 # include <sys/time.h>
 # include <semaphore.h>
-# include <signal.h>
 
 typedef struct s_vars	t_vars;
 
 typedef struct s_philosopher
 {
 	int				id;
-	int				nb_must_eat;
-	int				forks;
 	int				last_time_eat;
 	int				nb_meals;
 	pthread_t		thread;
@@ -44,7 +41,6 @@ typedef struct s_vars
 	int				last_time_eat;
 	long			start_time;
 	int				stop_simulation;
-	int				print_death;
 	pthread_t		monitor_thread;
 	pthread_t		death_thread;
 	sem_t			*stop;
