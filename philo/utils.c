@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 14:30:42 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/19 14:41:48 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/02/29 11:38:29 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,5 +32,8 @@ void	safe_mutex_unlock(pthread_mutex_t *mutex, t_vars *vars)
 
 void	print_msg(t_philosopher *philo, char *msg)
 {
-	printf("%ld %d %s\n", time_passed(philo->vars), philo->id, msg);
+	safe_mutex_lock(&philo->vars->mutex, philo->vars);
+	if (philo->vars->stop_simulation == 0)
+		printf("%ld %d %s\n", time_passed(philo->vars), philo->id, msg);
+	safe_mutex_unlock(&philo->vars->mutex, philo->vars);
 }
