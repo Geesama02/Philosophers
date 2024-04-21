@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 11:35:31 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/20 12:11:08 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/02/27 16:34:21 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int	check_if_dead(t_vars *vars)
 		safe_mutex_lock(&vars->philosophers[i].mutex, vars);
 		if (time_now - vars->philosophers[i].last_time_eat > vars->time_to_die)
 		{
-			printf("%ld %d is dead\n", time_now, vars->philosophers[i].id);
+			printf("%ld %d died\n", time_now, vars->philosophers[i].id);
 			safe_mutex_lock(&vars->mutex, vars);
 			vars->stop_simulation = 1;
 			safe_mutex_unlock(&vars->mutex, vars);

@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 11:12:57 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/19 14:12:09 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/21 10:36:27 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ int	check_argv(int argc, char **argv)
 	while (i < argc)
 	{
 		if (count_digits(argv[i]) > 11 || ft_atoi(argv[i]) > 2147483647
-			|| ft_atoi(argv[i]) < 0 || !is_num(argv[i]))
+			|| ft_atoi(argv[i]) < 0 || !is_num(argv[i]) || ft_atoi(argv[1]) == 0)
 			return (0);
 		i++;
 	}

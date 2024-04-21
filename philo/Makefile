@@ -8,10 +8,10 @@ OBJS = ${SRC:.c=.o}
 all : ${NAME}
 
 ${NAME} : ${OBJS}
-	${CC} ${CFLAGS} -pthread ${OBJS} -o ${NAME}
+	${CC} ${CFLAGS} -g -fsanitize=thread -pthread ${OBJS} -o ${NAME}
 
 %.o: %.c philo.h
-	${CC} ${CFLAGS} -c -o $@ $<
+	${CC} ${CFLAGS} -g -fsanitize=thread -c -o $@ $<
 
 clean : 
 	rm -rf ${OBJS}

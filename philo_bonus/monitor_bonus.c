@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 11:35:31 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/27 13:21:01 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/21 19:57:15 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@ void	*monitor(void *vars)
 	tmp = (t_philosopher *)vars;
 	while (1)
 	{
-		if (stop_similation(tmp))
-			return (NULL);
+		// if (stop_similation(tmp))
+		// 	return (NULL);
 		if (check_if_done(tmp))
 		{
 			if (tmp->vars->nb_philo == tmp->id)
@@ -44,7 +44,7 @@ void	*monitor(void *vars)
 			return (NULL);
 		}
 		if (check_if_dead(tmp))
-			return (NULL);
+			exit(2);
 	}
 	return (NULL);
 }
@@ -72,7 +72,7 @@ int	check_if_dead(t_philosopher *philo)
 	if (time_now - philo->last_time_eat > philo->vars->time_to_die)
 	{
 		safe_sem_post(philo->vars->eat_time, philo);
-		print_msg(philo, "died");
+		philo->is_dead = 1;
 		while (i < philo->vars->nb_philo)
 		{
 			safe_sem_post(philo->vars->death, &philo->vars->philosophers[i]);

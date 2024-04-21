@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 16:38:05 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/27 13:01:39 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/21 15:12:31 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ typedef struct s_vars	t_vars;
 typedef struct s_philosopher
 {
 	int				id;
+	int				pid;
+	int 			is_dead;
 	int				last_time_eat;
 	int				nb_meals;
 	pthread_t		thread;

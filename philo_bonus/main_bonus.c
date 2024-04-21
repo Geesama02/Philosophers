@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 16:59:49 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/27 12:59:50 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/21 19:57:35 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 int	fork_process(t_vars *vars, int *pid, int *i)
 {
+	printf("main process %d created\n", getpid());
 	*pid = fork();
 	if (*pid == -1)
 	{
@@ -25,6 +26,7 @@ int	fork_process(t_vars *vars, int *pid, int *i)
 		usleep(300);
 		if (*pid != 0)
 		{
+			vars->philosophers[*i].pid = *pid;
 			*pid = fork();
 			if (*pid == -1)
 			{
@@ -36,6 +38,10 @@ int	fork_process(t_vars *vars, int *pid, int *i)
 			break ;
 		(*i)++;
 	}
+	if (*pid != 0)
+		vars->philosophers[*i].pid = *pid;
+		
+	// printf("child process %d created\n", vars->philosophers[*i].pid);
 	return (0);
 }
 
@@ -87,6 +93,9 @@ int	join_threads(t_vars *vars, int i, int pid)
 
 int	start_simulation(t_vars *vars, int *i, int *pid)
 {
+	int	status;
+
+	
 	if (fork_process(vars, pid, i))
 	{
 		if (clean_mem(vars, *pid))
@@ -101,8 +110,25 @@ int	start_simulation(t_vars *vars, int *i, int *pid)
 		if (join_threads(vars, *i, *pid))
 			return (1);
 	}
-	while (waitpid(-1, NULL, 0) > 0)
-		;
+	while (waitpid(-1, &status, 0) > 0)
+	{
+		*pid = waitpid(-1, &status, 0);
+		if (*pid == -1 && vars->nb_philo == 1)
+		{
+			print_msg(&vars->philosophers[*i], "died");
+			break ;
+		}
+		while (*i >= 0)
+		{
+			// printf("exit status %d\n", WEXITSTATUS(status));
+			if (vars->philosophers[*i].pid == *pid && WEXITSTATUS(status) == 2)
+			{
+				print_msg(&vars->philosophers[*i], "died");
+				break ;
+			}
+			(*i)--;
+		}
+	}
 	if (clean_mem(vars, *pid))
 	{
 		write(2, "sem_close() error\n", 18);

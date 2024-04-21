@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 12:00:29 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/27 13:01:56 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/21 15:13:15 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ int	fill_philo(t_vars *vars)
 		else
 			vars->philosophers[i].nb_meals = -1;
 		vars->philosophers[i].vars = vars;
+		vars->philosophers[i].is_dead = 0;
 		vars->philosophers[i].last_time_eat = 0;
 		i++;
 	}
