@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 11:35:31 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/04/21 19:57:15 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/22 17:47:24 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,13 @@ void	*monitor(void *vars)
 			return (NULL);
 		}
 		if (check_if_dead(tmp))
+		{
+			// safe_sem_wait(tmp->vars->stop, tmp);
+			safe_sem_post(tmp->vars->stop, tmp);
+			// print_msg(tmp, "died");
+			
 			exit(2);
+		}
 	}
 	return (NULL);
 }

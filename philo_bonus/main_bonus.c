@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 16:59:49 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/04/21 19:57:35 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/22 18:06:17 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,8 +123,13 @@ int	start_simulation(t_vars *vars, int *i, int *pid)
 			// printf("exit status %d\n", WEXITSTATUS(status));
 			if (vars->philosophers[*i].pid == *pid && WEXITSTATUS(status) == 2)
 			{
-				print_msg(&vars->philosophers[*i], "died");
-				break ;
+				// printf("child process %d died\n", *pid);
+				// printf("main process %d\n", getpid());
+				// print_msg(&vars->philosophers[*i], "died");
+				printf("process %d died\n", *pid);
+				printf("%ld %d died\n", time_passed(vars), vars->philosophers[*i].id);
+				// printf("after print\n");
+				exit(2);
 			}
 			(*i)--;
 		}
