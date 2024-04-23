@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 16:38:05 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/04/21 15:12:31 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/23 10:31:17 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <pthread.h>
 # include <sys/time.h>
 # include <semaphore.h>
+# include <signal.h>
 
 typedef struct s_vars	t_vars;
 
@@ -70,6 +71,7 @@ void	safe_sem_post(sem_t *sem, t_philosopher *philo);
 int		init_values(t_vars *vars, int argc, char **argv);
 int		init_philos(t_vars *vars);
 int		init_semaphores(t_vars *vars);
+int		clean(t_vars *vars);
 int		fill_philo(t_vars *vars);
 void	*monitor_death(void *vars);
 int		init_threads(t_vars *vars, int i, int pid);
