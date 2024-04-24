@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 11:28:33 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/19 14:39:34 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/24 10:45:03 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ int	start_threads(t_vars *vars)
 	int	i;
 
 	i = 0;
+	safe_mutex_lock(&vars->mutex, vars);
 	while (i < vars->nb_philo)
 	{
 		if (pthread_create(&vars->philosophers[i].thread, NULL,
@@ -44,6 +45,8 @@ int	start_threads(t_vars *vars)
 		usleep(300);
 		i++;
 	}
+	vars->start_time = time_now(vars);
+	safe_mutex_unlock(&vars->mutex, vars);
 	if (start_monitor(vars, i))
 		return (1);
 	return (0);

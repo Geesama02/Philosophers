@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 11:32:17 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/19 14:37:25 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/24 14:43:01 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,11 +49,11 @@ int	eat_routine(t_philosopher *philo)
 	safe_mutex_unlock(&philo->mutex, philo->vars);
 	if (stop_similation(philo))
 		return (0);
-	accurate_usleep(philo->vars->time_to_eat, philo->vars);
 	safe_mutex_lock(&philo->mutex, philo->vars);
 	if (philo->nb_meals != -1)
 		philo->nb_meals++;
 	safe_mutex_unlock(&philo->mutex, philo->vars);
+	accurate_usleep(philo->vars->time_to_eat, philo->vars);
 	if (philo->id % 2 == 0)
 	{
 		safe_mutex_unlock(&philo->left_fork->mutex, philo->vars);
@@ -92,6 +92,8 @@ void	*routine(void *philo)
 	t_philosopher	*tmp;
 
 	tmp = (t_philosopher *)philo;
+	safe_mutex_lock(&tmp->vars->mutex, tmp->vars);
+	safe_mutex_unlock(&tmp->vars->mutex, tmp->vars);
 	while (1)
 	{
 		if (!lock_forks(tmp))

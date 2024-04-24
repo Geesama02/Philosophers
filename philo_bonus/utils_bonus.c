@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 13:09:14 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/04/23 11:39:43 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/24 10:10:42 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,5 +51,20 @@ void	safe_sem_post(sem_t *sem, t_philosopher *philo)
 			write(2, "sem_close() error\n", 18);
 		sem_post(philo->vars->death);
 		exit(1);
+	}
+}
+
+void	wait_processs(t_vars *vars, int *i)
+{
+	int	status;
+
+	while (waitpid(-1, &status, 0) > 0)
+	{
+		if (WEXITSTATUS(status) == 2)
+		{
+			printf("%ld %d died\n", time_passed(vars),
+				vars->philosophers[*i].id);
+			break ;
+		}
 	}
 }

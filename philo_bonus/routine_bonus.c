@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 11:32:17 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/27 12:10:56 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/24 16:23:01 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,13 +48,13 @@ int	eat_routine(t_philosopher *philo)
 	safe_sem_post(philo->vars->eat_time, philo);
 	if (stop_similation(philo))
 		return (0);
-	accurate_usleep(philo->vars->time_to_eat, philo->vars);
-	if (stop_similation(philo))
-		return (0);
 	safe_sem_wait(philo->vars->eat, philo);
 	if (philo->nb_meals != -1)
 		philo->nb_meals++;
 	safe_sem_post(philo->vars->eat, philo);
+	if (stop_similation(philo))
+		return (0);
+	accurate_usleep(philo->vars->time_to_eat, philo->vars);
 	safe_sem_post(philo->vars->forks, philo);
 	safe_sem_post(philo->vars->forks, philo);
 	return (1);

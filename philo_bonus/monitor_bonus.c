@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 11:35:31 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/04/23 15:45:43 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/24 17:23:57 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ void	*monitor_death(void *vars)
 
 	philo = (t_philosopher *)vars;
 	safe_sem_wait(philo->vars->death, philo);
+	safe_sem_post(philo->vars->death, philo);
 	philo->vars->stop_simulation = 1;
 	free(philo->vars->philosophers);
 	if (philo->is_dead == 1)
@@ -48,14 +49,7 @@ void	*monitor(void *vars)
 			return (NULL);
 		}
 		if (check_if_dead(tmp))
-		{
-			// safe_sem_wait(tmp->vars->stop, tmp);
-			// safe_sem_post(tmp->vars->stop, tmp);
-			// print_msg(tmp, "died");
-			
-			// exit(2);
 			return (NULL);
-		}
 	}
 	return (NULL);
 }

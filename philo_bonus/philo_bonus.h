@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 16:38:05 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/04/23 10:31:17 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/24 15:10:15 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ typedef struct s_philosopher
 {
 	int				id;
 	int				pid;
-	int 			is_dead;
+	int				is_dead;
 	int				last_time_eat;
 	int				nb_meals;
 	pthread_t		thread;
@@ -57,6 +57,8 @@ typedef struct s_vars
 
 long	ft_atoi(const char *str);
 int		check_argv(int argc, char **argv);
+void	wait_processs(t_vars *vars, int *i);
+long	time_now(t_vars *vars);
 void	*routine(void *philo);
 void	*monitor(void *vars);
 int		stop_similation(t_philosopher *philo);
