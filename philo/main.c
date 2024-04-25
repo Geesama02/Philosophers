@@ -6,22 +6,15 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 11:54:59 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/04/25 09:53:28 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/25 12:12:36 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-// void	a(void)
-// {
-// 	system("leaks philo");
-// }
-
 int	main(int argc, char **argv)
 {
 	t_vars	vars;
-
-	// atexit(a);
 
 	if (!check_argv(argc, argv) || argc > 6 || argc < 5)
 	{
