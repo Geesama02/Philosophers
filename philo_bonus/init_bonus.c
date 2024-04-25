@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 12:00:29 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/04/21 15:13:15 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/25 10:53:06 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,11 @@ int	init_values(t_vars *vars, int argc, char **argv)
 {
 	struct timeval	tv;
 
-	gettimeofday(&tv, NULL);
+	if (gettimeofday(&tv, NULL) != 0)
+	{
+		write(2, "gettimeofday() error\n", 21);
+		exit(1);
+	}
 	vars->nb_philo = ft_atoi(argv[1]);
 	vars->time_to_die = ft_atoi(argv[2]);
 	vars->time_to_eat = ft_atoi(argv[3]);

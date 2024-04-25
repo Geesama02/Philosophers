@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 11:41:07 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/27 09:53:16 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/25 11:56:45 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ long	time_now(t_vars *vars)
 	if (gettimeofday(&tv, NULL) != 0)
 	{
 		write(2, "gettimeofday() error\n", 22);
-		vars->stop_simulation = 1;
-		return (-1);
+		safe_sem_post(vars->death, vars->philosophers);
+		exit(1);
 	}
 	time = tv.tv_sec * 1000 + tv.tv_usec / 1000;
 	return (time);

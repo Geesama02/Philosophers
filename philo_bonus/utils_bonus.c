@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 13:09:14 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/04/24 10:10:42 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/25 10:43:28 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 int	clean(t_vars *vars)
 {
+	free(vars->philosophers);
 	if (sem_close(vars->forks) != 0)
 		return (1);
 	if (sem_close(vars->stop) != 0)
@@ -26,7 +27,6 @@ int	clean(t_vars *vars)
 		return (1);
 	if (sem_close(vars->death) != 0)
 		return (1);
-	free(vars->philosophers);
 	return (0);
 }
 
