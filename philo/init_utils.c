@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 10:59:12 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/19 14:09:36 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/26 15:05:16 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,11 @@ int	init_values(t_vars *vars, int argc, char **argv)
 {
 	struct timeval	tv;
 
-	gettimeofday(&tv, NULL);
-	vars->nb_philo = ft_atoi(argv[1]);
+	if (gettimeofday(&tv, NULL) != 0)
+	{
+		write(2, "gettimeofday() error\n", 21);
+		return (1);
+	}
 	vars->nb_philo = ft_atoi(argv[1]);
 	vars->time_to_die = ft_atoi(argv[2]);
 	vars->time_to_eat = ft_atoi(argv[3]);
@@ -51,8 +54,8 @@ int	init_forks(t_vars *vars)
 		if (pthread_mutex_init(&vars->forks[i].mutex, NULL) != 0)
 		{
 			write(2, "pthread_mutex_init() error\n", 28);
-			free(vars->forks);
 			destroy_forks_mutex(vars, i);
+			free(vars->forks);
 			vars->stop_simulation = 1;
 			return (0);
 		}
@@ -94,9 +97,8 @@ int	init_philos(t_vars *vars)
 	if (vars->philosophers == NULL)
 	{
 		write(2, "malloc() error\n", 15);
-		free(vars->forks);
 		destroy_forks_mutex(vars, vars->nb_philo);
-		destroy_philo_mutex(vars, vars->nb_philo);
+		free(vars->forks);
 		return (0);
 	}
 	if (!fill_philo(vars))
@@ -110,10 +112,10 @@ int	init_mutex(t_vars *vars, pthread_mutex_t *mutex, int philo, int forks)
 	{
 		write(2, "pthread_mutex_init() error\n", 28);
 		vars->stop_simulation = 1;
-		free(vars->forks);
-		free(vars->philosophers);
 		destroy_philo_mutex(vars, philo);
 		destroy_forks_mutex(vars, forks);
+		free(vars->forks);
+		free(vars->philosophers);
 		return (1);
 	}
 	return (0);
