@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 12:00:29 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/04/25 10:53:06 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/27 12:02:44 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,9 +115,9 @@ int	init_threads(t_vars *vars, int i, int pid)
 	{
 		write(2, "pthread_create() error\n", 23);
 		safe_sem_post(vars->death, &vars->philosophers[i]);
-		if (pthread_join(vars->death_thread, NULL) != 0)
+		if (pthread_detach(vars->death_thread) != 0)
 		{
-			write(2, "pthread_join() error\n", 21);
+			write(2, "pthread_detach() error\n", 21);
 			safe_sem_post(vars->death, &vars->philosophers[i]);
 			clean_mem(vars, pid);
 			return (1);

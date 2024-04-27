@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 13:09:14 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/04/25 17:17:29 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/27 15:24:03 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,8 @@ void	safe_sem_wait(sem_t *sem, t_philosopher *philo)
 {
 	if (sem_wait(sem) != 0 && philo->vars->stop_simulation == 0)
 	{
-		write(2, "sem_wait() error\n", 17);clean(philo->vars);
+		write(2, "sem_wait() error\n", 17);
+		clean(philo->vars);
 		sem_post(philo->vars->death);
 		exit(1);
 	}

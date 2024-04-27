@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 16:59:49 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/04/26 15:00:26 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/27 12:04:45 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,18 +67,18 @@ int	clean_mem(t_vars *vars, int pid)
 	return (0);
 }
 
-int	join_threads(t_vars *vars, int i, int pid)
+int	detach_threads(t_vars *vars, int i, int pid)
 {
-	if (pthread_join(vars->death_thread, NULL) != 0)
+	if (pthread_detach(vars->death_thread) != 0)
 	{
-		write(2, "pthread_join() error\n", 21);
+		write(2, "pthread_detach() error\n", 21);
 		safe_sem_post(vars->death, &vars->philosophers[i]);
 		clean_mem(vars, pid);
 		return (1);
 	}
-	if (pthread_join(vars->monitor_thread, NULL) != 0)
+	if (pthread_detach(vars->monitor_thread) != 0)
 	{
-		write(2, "pthread_join() error\n", 21);
+		write(2, "pthread_detach() error\n", 21);
 		safe_sem_post(vars->death, &vars->philosophers[i]);
 		clean_mem(vars, pid);
 		return (1);
@@ -98,7 +98,7 @@ int	start_simulation(t_vars *vars, int *i, int *pid)
 		if (init_threads(vars, *i, *pid))
 			return (1);
 		routine(&vars->philosophers[*i]);
-		if (join_threads(vars, *i, *pid))
+		if (detach_threads(vars, *i, *pid))
 			return (1);
 	}
 	wait_processs(vars, i);

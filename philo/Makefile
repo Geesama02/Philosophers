@@ -1,4 +1,4 @@
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror 
 CC = cc
 NAME = philo
 SRC = main.c ft_atoi.c parse.c init_utils.c clean_utils.c monitor.c routine.c \
