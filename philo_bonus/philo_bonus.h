@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 16:38:05 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/04/24 15:10:15 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/28 14:20:03 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,6 @@ void	print_msg(t_philosopher *philo, char *msg);
 long	time_passed(t_vars *vars);
 int		check_if_done(t_philosopher *philo);
 int		check_if_dead(t_philosopher *philo);
-void	safe_sem_wait(sem_t *sem, t_philosopher *philo);
-void	safe_sem_post(sem_t *sem, t_philosopher *philo);
 int		init_values(t_vars *vars, int argc, char **argv);
 int		init_philos(t_vars *vars);
 int		init_semaphores(t_vars *vars);

@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 11:41:07 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/04/25 11:56:45 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/27 16:30:14 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ long	time_now(t_vars *vars)
 	if (gettimeofday(&tv, NULL) != 0)
 	{
 		write(2, "gettimeofday() error\n", 22);
-		safe_sem_post(vars->death, vars->philosophers);
+		sem_post(vars->death);
 		exit(1);
 	}
 	time = tv.tv_sec * 1000 + tv.tv_usec / 1000;
@@ -54,10 +54,10 @@ long	time_passed(t_vars *vars)
 
 void	print_msg(t_philosopher *philo, char *msg)
 {
-	safe_sem_wait(philo->vars->print, philo);
-	safe_sem_wait(philo->vars->stop, philo);
+	sem_wait(philo->vars->print);
+	sem_wait(philo->vars->stop);
 	if (philo->vars->stop_simulation == 0)
 		printf("%ld %d %s\n", time_passed(philo->vars), philo->id, msg);
-	safe_sem_post(philo->vars->stop, philo);
-	safe_sem_post(philo->vars->print, philo);
+	sem_post(philo->vars->stop);
+	sem_post(philo->vars->print);
 }

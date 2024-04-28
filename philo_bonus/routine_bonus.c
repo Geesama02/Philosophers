@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 11:32:17 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/04/27 15:22:11 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/27 16:27:51 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,18 +16,18 @@ int	lock_forks(t_philosopher *philo)
 {
 	if (stop_similation(philo))
 		return (0);
-	safe_sem_wait(philo->vars->forks, philo);
+	sem_wait(philo->vars->forks);
 	if (stop_similation(philo))
 	{
-		safe_sem_post(philo->vars->forks, philo);
+		sem_post(philo->vars->forks);
 		return (0);
 	}
 	print_msg(philo, "has taken a fork");
-	safe_sem_wait(philo->vars->forks, philo);
+	sem_wait(philo->vars->forks);
 	if (stop_similation(philo))
 	{
-		safe_sem_post(philo->vars->forks, philo);
-		safe_sem_post(philo->vars->forks, philo);
+		sem_post(philo->vars->forks);
+		sem_post(philo->vars->forks);
 		return (0);
 	}
 	print_msg(philo, "has taken a fork");
@@ -38,27 +38,27 @@ int	eat_routine(t_philosopher *philo)
 {
 	if (stop_similation(philo))
 	{
-		safe_sem_post(philo->vars->forks, philo);
-		safe_sem_post(philo->vars->forks, philo);
+		sem_post(philo->vars->forks);
+		sem_post(philo->vars->forks);
 		return (0);
 	}
 	print_msg(philo, "is eating");
-	safe_sem_wait(philo->vars->eat_time, philo);
+	sem_wait(philo->vars->eat_time);
 	philo->last_time_eat = time_passed(philo->vars);
-	safe_sem_post(philo->vars->eat_time, philo);
-	safe_sem_wait(philo->vars->eat, philo);
+	sem_post(philo->vars->eat_time);
+	sem_wait(philo->vars->eat);
 	if (philo->nb_meals != -1)
 		philo->nb_meals++;
-	safe_sem_post(philo->vars->eat, philo);
+	sem_post(philo->vars->eat);
 	if (stop_similation(philo))
 	{
-		safe_sem_post(philo->vars->forks, philo);
-		safe_sem_post(philo->vars->forks, philo);
+		sem_post(philo->vars->forks);
+		sem_post(philo->vars->forks);
 		return (0);
 	}
 	accurate_usleep(philo->vars->time_to_eat, philo->vars);
-	safe_sem_post(philo->vars->forks, philo);
-	safe_sem_post(philo->vars->forks, philo);
+	sem_post(philo->vars->forks);
+	sem_post(philo->vars->forks);
 	return (1);
 }
 

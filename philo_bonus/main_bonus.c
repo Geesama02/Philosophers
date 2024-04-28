@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 16:59:49 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/04/27 12:04:45 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/28 11:25:04 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ int	fork_process(t_vars *vars, int *pid, int *i)
 int	clean_mem(t_vars *vars, int pid)
 {
 	free(vars->philosophers);
+	if (vars->forks == SEM_FAILED)
+		printf("forks\n");
 	if (sem_close(vars->forks) != 0)
 		write(2, "sem_close() error\n", 18);
 	if (sem_close(vars->stop) != 0)
@@ -67,19 +69,19 @@ int	clean_mem(t_vars *vars, int pid)
 	return (0);
 }
 
-int	detach_threads(t_vars *vars, int i, int pid)
+int	detach_threads(t_vars *vars, int pid)
 {
 	if (pthread_detach(vars->death_thread) != 0)
 	{
 		write(2, "pthread_detach() error\n", 21);
-		safe_sem_post(vars->death, &vars->philosophers[i]);
+		sem_post(vars->death);
 		clean_mem(vars, pid);
 		return (1);
 	}
 	if (pthread_detach(vars->monitor_thread) != 0)
 	{
 		write(2, "pthread_detach() error\n", 21);
-		safe_sem_post(vars->death, &vars->philosophers[i]);
+		sem_post(vars->death);
 		clean_mem(vars, pid);
 		return (1);
 	}
@@ -98,7 +100,7 @@ int	start_simulation(t_vars *vars, int *i, int *pid)
 		if (init_threads(vars, *i, *pid))
 			return (1);
 		routine(&vars->philosophers[*i]);
-		if (detach_threads(vars, *i, *pid))
+		if (detach_threads(vars, *pid))
 			return (1);
 	}
 	wait_processs(vars, i);
