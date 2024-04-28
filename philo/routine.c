@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 11:32:17 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/04/28 14:18:45 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/28 14:31:16 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,22 +18,22 @@ int	lock_forks(t_philosopher *philo)
 		return (0);
 	if (philo->id % 2 == 0)
 	{
-		safe_mutex_lock(&philo->left_fork->mutex, philo->vars);
+		pthread_mutex_lock(&philo->left_fork->mutex);
 		if (stop_similation(philo))
 			return (0);
 		print_msg(philo, "has taken a fork");
-		safe_mutex_lock(&philo->right_fork->mutex, philo->vars);
+		pthread_mutex_lock(&philo->right_fork->mutex);
 		if (stop_similation(philo))
 			return (0);
 		print_msg(philo, "has taken a fork");
 	}
 	else
 	{
-		safe_mutex_lock(&philo->right_fork->mutex, philo->vars);
+		pthread_mutex_lock(&philo->right_fork->mutex);
 		if (stop_similation(philo))
 			return (0);
 		print_msg(philo, "has taken a fork");
-		safe_mutex_lock(&philo->left_fork->mutex, philo->vars);
+		pthread_mutex_lock(&philo->left_fork->mutex);
 		if (stop_similation(philo))
 			return (0);
 		print_msg(philo, "has taken a fork");
@@ -44,25 +44,25 @@ int	lock_forks(t_philosopher *philo)
 int	eat_routine(t_philosopher *philo)
 {
 	print_msg(philo, "is eating");
-	safe_mutex_lock(&philo->mutex, philo->vars);
+	pthread_mutex_lock(&philo->mutex);
 	philo->last_time_eat = time_passed(philo->vars);
-	safe_mutex_unlock(&philo->mutex, philo->vars);
+	pthread_mutex_unlock(&philo->mutex);
 	if (stop_similation(philo))
 		return (0);
-	safe_mutex_lock(&philo->mutex, philo->vars);
+	pthread_mutex_lock(&philo->mutex);
 	if (philo->nb_meals != -1)
 		philo->nb_meals++;
-	safe_mutex_unlock(&philo->mutex, philo->vars);
+	pthread_mutex_unlock(&philo->mutex);
 	accurate_usleep(philo->vars->time_to_eat, philo->vars);
 	if (philo->id % 2 == 0)
 	{
-		safe_mutex_unlock(&philo->left_fork->mutex, philo->vars);
-		safe_mutex_unlock(&philo->right_fork->mutex, philo->vars);
+		pthread_mutex_unlock(&philo->left_fork->mutex);
+		pthread_mutex_unlock(&philo->right_fork->mutex);
 	}
 	else
 	{
-		safe_mutex_unlock(&philo->right_fork->mutex, philo->vars);
-		safe_mutex_unlock(&philo->left_fork->mutex, philo->vars);
+		pthread_mutex_unlock(&philo->right_fork->mutex);
+		pthread_mutex_unlock(&philo->left_fork->mutex);
 	}
 	return (1);
 }
@@ -92,8 +92,8 @@ void	*routine(void *philo)
 	t_philosopher	*tmp;
 
 	tmp = (t_philosopher *)philo;
-	safe_mutex_lock(&tmp->vars->mutex, tmp->vars);
-	safe_mutex_unlock(&tmp->vars->mutex, tmp->vars);
+	pthread_mutex_lock(&tmp->vars->mutex);
+	pthread_mutex_unlock(&tmp->vars->mutex);
 	while (1)
 	{
 		if (!lock_forks(tmp))

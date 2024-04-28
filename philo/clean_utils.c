@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 11:21:18 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/19 14:06:34 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/28 14:29:45 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,9 +75,9 @@ void	clean_memory(t_vars *vars)
 int	handle_create_thread_error(t_vars *vars, int i)
 {
 	write(2, "pthread_create() error\n", 24);
-	safe_mutex_lock(&vars->mutex, vars);
+	pthread_mutex_lock(&vars->mutex);
 	vars->stop_simulation = 1;
-	safe_mutex_unlock(&vars->mutex, vars);
+	pthread_mutex_unlock(&vars->mutex);
 	while (i >= 0)
 	{
 		if (safe_thread_join(vars->philosophers[i].thread, vars))

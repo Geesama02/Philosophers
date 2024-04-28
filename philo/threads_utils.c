@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 11:28:33 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/04/24 10:45:03 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/28 14:31:45 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	start_threads(t_vars *vars)
 	int	i;
 
 	i = 0;
-	safe_mutex_lock(&vars->mutex, vars);
+	pthread_mutex_lock(&vars->mutex);
 	while (i < vars->nb_philo)
 	{
 		if (pthread_create(&vars->philosophers[i].thread, NULL,
@@ -46,7 +46,7 @@ int	start_threads(t_vars *vars)
 		i++;
 	}
 	vars->start_time = time_now(vars);
-	safe_mutex_unlock(&vars->mutex, vars);
+	pthread_mutex_unlock(&vars->mutex);
 	if (start_monitor(vars, i))
 		return (1);
 	return (0);
@@ -67,9 +67,9 @@ int	safe_thread_join(pthread_t thread, t_vars *vars)
 	if (pthread_join(thread, NULL) != 0)
 	{
 		write(2, "pthread_join() error\n", 22);
-		safe_mutex_lock(&vars->mutex, vars);
+		pthread_mutex_lock(&vars->mutex);
 		vars->stop_simulation = 1;
-		safe_mutex_unlock(&vars->mutex, vars);
+		pthread_mutex_unlock(&vars->mutex);
 		clean_memory(vars);
 		return (1);
 	}

@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 11:35:31 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/04/25 10:11:27 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/28 14:30:31 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@ void	*monitor(void *vars)
 	{
 		if (check_if_done(tmp))
 		{
-			safe_mutex_lock(&tmp->mutex, tmp);
+			pthread_mutex_lock(&tmp->mutex);
 			tmp->stop_simulation = 1;
-			safe_mutex_unlock(&tmp->mutex, tmp);
+			pthread_mutex_unlock(&tmp->mutex);
 			return (NULL);
 		}
 		if (check_if_dead(tmp))
@@ -34,15 +34,15 @@ void	*monitor(void *vars)
 
 int	stop_similation(t_philosopher *philo)
 {
-	safe_mutex_lock(&philo->vars->mutex, philo->vars);
+	pthread_mutex_lock(&philo->vars->mutex);
 	if (philo->vars->stop_simulation == 1)
 	{
-		safe_mutex_unlock(&philo->vars->mutex, philo->vars);
-		safe_mutex_unlock(&philo->left_fork->mutex, philo->vars);
-		safe_mutex_unlock(&philo->right_fork->mutex, philo->vars);
+		pthread_mutex_unlock(&philo->vars->mutex);
+		pthread_mutex_unlock(&philo->left_fork->mutex);
+		pthread_mutex_unlock(&philo->right_fork->mutex);
 		return (1);
 	}
-	safe_mutex_unlock(&philo->vars->mutex, philo->vars);
+	pthread_mutex_unlock(&philo->vars->mutex);
 	return (0);
 }
 
@@ -55,19 +55,19 @@ int	check_if_dead(t_vars *vars)
 	while (i < vars->nb_philo)
 	{
 		time_now = time_passed(vars);
-		safe_mutex_lock(&vars->philosophers[i].mutex, vars);
+		pthread_mutex_lock(&vars->philosophers[i].mutex);
 		if (time_now - vars->philosophers[i].last_time_eat > vars->time_to_die)
 		{
 			print_msg(&vars->philosophers[i], "died");
-			safe_mutex_lock(&vars->mutex, vars);
+			pthread_mutex_lock(&vars->mutex);
 			vars->stop_simulation = 1;
-			safe_mutex_unlock(&vars->mutex, vars);
-			safe_mutex_unlock(&vars->philosophers[i].mutex, vars);
-			safe_mutex_unlock(&vars->philosophers[i].left_fork->mutex, vars);
-			safe_mutex_unlock(&vars->philosophers[i].right_fork->mutex, vars);
+			pthread_mutex_unlock(&vars->mutex);
+			pthread_mutex_unlock(&vars->philosophers[i].mutex);
+			pthread_mutex_unlock(&vars->philosophers[i].left_fork->mutex);
+			pthread_mutex_unlock(&vars->philosophers[i].right_fork->mutex);
 			return (1);
 		}
-		safe_mutex_unlock(&vars->philosophers[i].mutex, vars);
+		pthread_mutex_unlock(&vars->philosophers[i].mutex);
 		i++;
 	}
 	return (0);
@@ -82,13 +82,13 @@ int	check_if_done(t_vars *vars)
 		return (0);
 	while (i < vars->nb_philo)
 	{
-		safe_mutex_lock(&vars->philosophers[i].mutex, vars);
+		pthread_mutex_lock(&vars->philosophers[i].mutex);
 		if (vars->philosophers[i].nb_meals < vars->nb_meals)
 		{
-			safe_mutex_unlock(&vars->philosophers[i].mutex, vars);
+			pthread_mutex_unlock(&vars->philosophers[i].mutex);
 			return (0);
 		}
-		safe_mutex_unlock(&vars->philosophers[i].mutex, vars);
+		pthread_mutex_unlock(&vars->philosophers[i].mutex);
 		i++;
 	}
 	return (1);

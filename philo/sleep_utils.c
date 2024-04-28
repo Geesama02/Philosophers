@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 11:41:07 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/02/19 14:38:21 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/28 14:31:26 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@ long	time_now(t_vars *vars)
 	if (gettimeofday(&tv, NULL) != 0)
 	{
 		write(2, "gettimeofday() error\n", 22);
-		safe_mutex_lock(&vars->mutex, vars);
+		pthread_mutex_lock(&vars->mutex);
 		vars->stop_simulation = 1;
-		safe_mutex_unlock(&vars->mutex, vars);
+		pthread_mutex_unlock(&vars->mutex);
 		return (-1);
 	}
 	time = tv.tv_sec * 1000 + tv.tv_usec / 1000;
