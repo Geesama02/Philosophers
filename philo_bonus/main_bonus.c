@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 16:59:49 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/04/28 11:25:04 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/29 10:23:16 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,6 @@ int	fork_process(t_vars *vars, int *pid, int *i)
 int	clean_mem(t_vars *vars, int pid)
 {
 	free(vars->philosophers);
-	if (vars->forks == SEM_FAILED)
-		printf("forks\n");
 	if (sem_close(vars->forks) != 0)
 		write(2, "sem_close() error\n", 18);
 	if (sem_close(vars->stop) != 0)
@@ -58,14 +56,7 @@ int	clean_mem(t_vars *vars, int pid)
 	if (sem_close(vars->death) != 0)
 		write(2, "sem_close() error\n", 18);
 	if (pid != 0)
-	{
-		sem_unlink("forks");
-		sem_unlink("stop");
-		sem_unlink("print");
-		sem_unlink("eat");
-		sem_unlink("eat_time");
-		sem_unlink("death");
-	}
+		unlink_sem();
 	return (0);
 }
 

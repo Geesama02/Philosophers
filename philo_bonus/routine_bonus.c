@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 11:32:17 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/04/27 16:27:51 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/29 11:08:09 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,9 +78,6 @@ int	think_routine(t_philosopher *philo)
 	if (stop_similation(philo))
 		return (0);
 	print_msg(philo, "is thinking");
-	if (philo->vars->nb_philo % 2 != 0 && philo->id % 2)
-		accurate_usleep((philo->vars->time_to_eat * 2
-				- philo->vars->time_to_sleep) / 2, philo->vars);
 	return (1);
 }
 

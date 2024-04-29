@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 13:09:14 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/04/28 14:19:49 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/29 10:22:45 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,22 @@ int	clean(t_vars *vars)
 	if (sem_close(vars->forks) != 0)
 		write(2, "sem_close() error\n", 18);
 	return (0);
+}
+
+void	unlink_sem(void)
+{
+	if (sem_unlink("forks"))
+		write(2, "sem_unlink() error\n", 19);
+	if (sem_unlink("stop"))
+		write(2, "sem_unlink() error\n", 19);
+	if (sem_unlink("print"))
+		write(2, "sem_unlink() error\n", 19);
+	if (sem_unlink("eat"))
+		write(2, "sem_unlink() error\n", 19);
+	if (sem_unlink("eat_time"))
+		write(2, "sem_unlink() error\n", 19);
+	if (sem_unlink("death"))
+		write(2, "sem_unlink() error\n", 19);
 }
 
 void	wait_processs(t_vars *vars, int *i)

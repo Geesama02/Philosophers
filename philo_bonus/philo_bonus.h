@@ -6,7 +6,7 @@
 /*   By: oait-laa <oait-laa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 16:38:05 by oait-laa          #+#    #+#             */
-/*   Updated: 2024/04/28 14:20:03 by oait-laa         ###   ########.fr       */
+/*   Updated: 2024/04/29 10:22:56 by oait-laa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,5 +76,6 @@ int		fill_philo(t_vars *vars);
 void	*monitor_death(void *vars);
 int		init_threads(t_vars *vars, int i, int pid);
 int		clean_mem(t_vars *vars, int pid);
+void	unlink_sem(void);
 
 #endif
