@@ -1,5 +1,5 @@
 # Project Overview
-The Philosophers project tasks students with simulating the "Dining Philosophers" problem, where a group of philosophers must share a limited number of forks while adhering to certain rules. The primary challenge is to ensure that the philosophers do not encounter deadlock or starvation while dining, demonstrating proper use of threading, mutexes, and synchronization techniques.
+The Philosophers project requires simulating the "Dining Philosophers" problem, where a group of philosophers must share a limited number of forks while adhering to certain rules. The primary challenge is to ensure that the philosophers do not encounter deadlock or starvation while dining, demonstrating proper use of threading, mutexes, and synchronization techniques.
 
 # Key Features
 Multithreading: Implement a multithreaded simulation to model the behavior of concurrent philosophers.
